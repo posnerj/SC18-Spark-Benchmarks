@@ -1,0 +1,59 @@
+group 'SC18-Spark-Benchmarks'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 8
+targetCompatibility = 8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.spark', name: 'spark-core_2.11', version: '2.3.0'
+    compile group: 'org.apache.spark', name: 'spark-sql_2.11', version: '2.3.0'
+}
+
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src"]
+        }
+    }
+}
+
+task copyToLib << {
+    [ 'compile','runtime','testCompile' ].each { mode ->
+        copy {
+            from configurations.getByName(mode).files
+            into 'spark/jars'
+        }
+    }
+}
+
+task copyToBin(type: Copy) {
+    delete "bin"
+    from "${buildDir}/classes/java/main"
+    into "bin"
+    from "${buildDir}/libs"
+    into "bin"
+}
+
+configurations {
+    jar.archiveName = 'BigDataAnalytics-Spark.jar'
+}
+
+jar {
+    manifest {
+        attributes 'BigDataAnalytics': 'Spark'
+    }
+}
+
+build.finalizedBy(copyToLib)
+build.finalizedBy(copyToBin)
+copyToLib.dependsOn(build)
+copyToBin.dependsOn(build)
