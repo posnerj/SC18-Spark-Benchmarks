@@ -44,12 +44,12 @@ task copyToBin(type: Copy) {
 }
 
 configurations {
-    jar.archiveName = 'BigDataAnalytics-Spark.jar'
+    jar.archiveName = 'SC18-Spark-Benchmarks.jar'
 }
 
 jar {
     manifest {
-        attributes 'BigDataAnalytics': 'Spark'
+        attributes 'SC18-Spark-Benchmarks': 'Spark'
     }
 }
 
